@@ -99,14 +99,17 @@ digdag-lsp/
 └── vitest.config.ts
 ```
 
-## Packaging
+## Packaging & Installation
 
 ```sh
 cd packages/client
-pnpm vsce package
+pnpm package
 ```
 
-This produces a `.vsix` file that can be installed in VS Code via **Extensions > Install from VSIX...**.
+This produces a `.vsix` file. To install it in VS Code:
+
+- **Via UI** — Extensions panel → `...` menu → **Install from VSIX...** → select the `.vsix` file
+- **Via CLI** — `code --install-extension packages/client/digdag-lsp-0.1.0.vsix`
 
 ## License
 
