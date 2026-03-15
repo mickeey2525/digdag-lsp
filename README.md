@@ -30,6 +30,8 @@ Real-time validation with error and warning diagnostics:
 | `_background` conflicts with `_parallel` | Warning |
 | Unknown operator name | Warning |
 | Unknown `_` directive | Warning |
+| Unknown parameter for operator | Warning |
+| Missing required parameter for operator | Error |
 
 ### Completion
 
@@ -104,13 +106,23 @@ digdag-lsp/
 ## Packaging & Installation
 
 ```sh
-pnpm build
-cd packages/client && pnpm vsce package --no-dependencies
+make install-ext
 ```
 
-This bundles the server and client with esbuild and produces a `.vsix` file. To install it in VS Code:
+This runs the full chain: `pnpm install` → `pnpm build` → `vsce package` → `code --install-extension`. Then reload VS Code to activate.
 
-- **Via UI** — Extensions panel → `...` menu → **Install from VSIX...** → select the `.vsix` file
+You can also run individual steps:
+
+```sh
+make install    # pnpm install
+make build      # pnpm install + pnpm build
+make package    # build + vsce package
+make install-ext # package + install in VS Code
+```
+
+Or manually:
+
+- **Via UI** — Extensions panel → `...` menu → **Install from VSIX...** → select `packages/client/digdag-lsp-0.1.0.vsix`
 - **Via CLI** — `code --install-extension packages/client/digdag-lsp-0.1.0.vsix`
 
 ## License
