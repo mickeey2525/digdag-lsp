@@ -4,6 +4,10 @@
   "description": "Language support for Digdag workflow definition files (.dig)",
   "version": "0.1.0",
   "publisher": "mickeey2525",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mickeey2525/digdag-lsp.git"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -32,7 +36,7 @@
   "scripts": {
     "build": "tsc -b",
     "watch": "tsc -b -w",
-    "package": "vsce package"
+    "package": "vsce package --no-dependencies"
   },
   "dependencies": {
     "vscode-languageclient": "^9.0.1"

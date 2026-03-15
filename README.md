@@ -59,14 +59,14 @@ Hover documentation for:
 ### Build
 
 ```sh
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ### Run Tests
 
 ```sh
-npm test
+pnpm test
 ```
 
 ### Debug in VS Code
@@ -94,7 +94,7 @@ digdag-lsp/
 │       ├── src/
 │       │   └── extension.ts          # Launches LSP server
 │       └── syntaxes/                 # TextMate grammar
-├── package.json          # npm workspaces root
+├── package.json          # pnpm workspaces root
 ├── tsconfig.base.json
 └── vitest.config.ts
 ```
@@ -103,7 +103,7 @@ digdag-lsp/
 
 ```sh
 cd packages/client
-npx vsce package
+pnpm vsce package
 ```
 
 This produces a `.vsix` file that can be installed in VS Code via **Extensions > Install from VSIX...**.
