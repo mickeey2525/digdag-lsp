@@ -6,11 +6,13 @@
     "node": ">=24"
   },
   "scripts": {
-    "build": "pnpm --filter digdag-language-server build && pnpm --filter digdag-lsp build",
+    "build": "node esbuild.mjs",
+    "build:watch": "node esbuild.mjs --watch",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "esbuild": "^0.27.4",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"
   },
