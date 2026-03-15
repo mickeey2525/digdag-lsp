@@ -10,7 +10,8 @@ A VS Code extension providing language support (LSP) for [Digdag](https://www.di
 
 ```sh
 pnpm install          # Install all dependencies (root + workspaces)
-pnpm build            # Build server then client
+pnpm build            # Bundle server + client with esbuild
+pnpm build:watch      # Bundle in watch mode
 pnpm test             # Run all tests (vitest)
 pnpm test:watch       # Run tests in watch mode
 ```
@@ -22,7 +23,7 @@ pnpm vitest run packages/server/__tests__/providers/completionProvider.test.ts
 
 Package the extension:
 ```sh
-cd packages/client && pnpm vsce package
+cd packages/client && pnpm vsce package --no-dependencies
 ```
 
 ## Architecture
@@ -55,6 +56,10 @@ Monorepo with npm workspaces, two packages:
 ## Testing
 
 Tests use **vitest** and live in `packages/server/__tests__/`, mirroring the `src/` structure. Tests cover parsers and all providers.
+
+## Bundling
+
+Both the server and client are bundled with **esbuild** (`esbuild.mjs` at the repo root). The server is bundled into `packages/client/out/server.js` so that both files are co-located and included in the `.vsix` package.
 
 ## TypeScript
 

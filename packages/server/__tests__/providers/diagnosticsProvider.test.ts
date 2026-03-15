@@ -203,6 +203,117 @@ describe("diagnosticsProvider", () => {
     });
   });
 
+  describe("unknown operator parameter", () => {
+    it("warns on unknown parameter for a known operator", () => {
+      const text = `
++task:
+  sh>: echo "hello"
+  unknown_param: value
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const unknown = diagnostics.filter((d) =>
+        d.message.includes("Unknown parameter")
+      );
+      expect(unknown.length).toBe(1);
+      expect(unknown[0].message).toContain("unknown_param");
+      expect(unknown[0].message).toContain("sh>");
+    });
+
+    it("does not warn on valid parameter for a known operator", () => {
+      const text = `
++task:
+  sh>: echo "hello"
+  shell: /bin/bash
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const unknown = diagnostics.filter((d) =>
+        d.message.includes("Unknown parameter")
+      );
+      expect(unknown.length).toBe(0);
+    });
+
+    it("does not warn on parameters for unknown operators", () => {
+      const text = `
++task:
+  custom_op>: value
+  some_param: abc
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const unknown = diagnostics.filter((d) =>
+        d.message.includes("Unknown parameter")
+      );
+      expect(unknown.length).toBe(0);
+    });
+
+    it("warns on multiple unknown parameters", () => {
+      const text = `
++task:
+  td>: queries/test.sql
+  database: mydb
+  bad_param1: value1
+  bad_param2: value2
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const unknown = diagnostics.filter((d) =>
+        d.message.includes("Unknown parameter")
+      );
+      expect(unknown.length).toBe(2);
+    });
+  });
+
+  describe("missing required operator parameter", () => {
+    it("reports error when required parameter is missing", () => {
+      const text = `
++task:
+  td_table_export>: mydb.mytable
+  s3_bucket: my-bucket
+  s3_path_prefix: /data
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const missing = diagnostics.filter((d) =>
+        d.message.includes("Missing required parameter")
+      );
+      // td_table_export> requires: file_format, from, to (td_table_export> itself is the operator value)
+      expect(missing.length).toBe(3);
+    });
+
+    it("does not report error when all required parameters are present", () => {
+      const text = `
++task:
+  td_table_export>: mydb.mytable
+  file_format: json.gz
+  from: "2024-01-01 00:00:00 +0000"
+  to: "2024-01-02 00:00:00 +0000"
+  s3_bucket: my-bucket
+  s3_path_prefix: /data
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const missing = diagnostics.filter((d) =>
+        d.message.includes("Missing required parameter")
+      );
+      expect(missing.length).toBe(0);
+    });
+
+    it("does not check required params for unknown operators", () => {
+      const text = `
++task:
+  custom_op>: value
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const missing = diagnostics.filter((d) =>
+        d.message.includes("Missing required parameter")
+      );
+      expect(missing.length).toBe(0);
+    });
+  });
+
   describe("unclosed variable interpolation", () => {
     it("reports error for unclosed ${", () => {
       const doc = parse(

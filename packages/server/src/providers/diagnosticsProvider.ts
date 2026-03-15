@@ -2,7 +2,7 @@ import { Diagnostic, DiagnosticSeverity } from "vscode-languageserver";
 import { DigdagDocument } from "../model/digdagDocument";
 import { Task } from "../model/task";
 import { DiagnosticInfo, toLSPRange } from "../model/types";
-import { isKnownOperator } from "../data/operators";
+import { isKnownOperator, getOperator } from "../data/operators";
 import { isKnownDirective } from "../data/directives";
 
 export function computeDiagnostics(doc: DigdagDocument): Diagnostic[] {
@@ -93,6 +93,41 @@ function validateTask(
       range: task.range,
       severity: DiagnosticSeverity.Warning,
     });
+  }
+
+  // Validate operator parameters
+  if (task.operators.length === 1) {
+    const op = task.operators[0];
+    const opDef = getOperator(op.name);
+    if (opDef) {
+      const validParamNames = new Set(opDef.params.map((p) => p.name));
+
+      // Unknown parameters
+      for (const entry of task.config) {
+        if (!validParamNames.has(entry.key)) {
+          diagnostics.push({
+            message: `Unknown parameter '${entry.key}' for operator '${op.name}'`,
+            range: entry.range,
+            severity: DiagnosticSeverity.Warning,
+          });
+        }
+      }
+
+      // Missing required parameters (excluding the operator key itself)
+      const presentKeys = new Set([
+        op.name,
+        ...task.config.map((e) => e.key),
+      ]);
+      for (const param of opDef.params) {
+        if (param.required && !presentKeys.has(param.name)) {
+          diagnostics.push({
+            message: `Missing required parameter '${param.name}' for operator '${op.name}'`,
+            range: op.range,
+            severity: DiagnosticSeverity.Error,
+          });
+        }
+      }
+    }
   }
 
   // _retry shape validation

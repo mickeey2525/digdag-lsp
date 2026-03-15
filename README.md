@@ -60,7 +60,8 @@ Hover documentation for:
 
 ```sh
 pnpm install
-pnpm build
+pnpm build            # Bundles server + client with esbuild
+pnpm build:watch      # Watch mode
 ```
 
 ### Run Tests
@@ -95,6 +96,7 @@ digdag-lsp/
 │       │   └── extension.ts          # Launches LSP server
 │       └── syntaxes/                 # TextMate grammar
 ├── package.json          # pnpm workspaces root
+├── esbuild.mjs           # Bundles server + client
 ├── tsconfig.base.json
 └── vitest.config.ts
 ```
@@ -102,11 +104,11 @@ digdag-lsp/
 ## Packaging & Installation
 
 ```sh
-cd packages/client
-pnpm package
+pnpm build
+cd packages/client && pnpm vsce package --no-dependencies
 ```
 
-This produces a `.vsix` file. To install it in VS Code:
+This bundles the server and client with esbuild and produces a `.vsix` file. To install it in VS Code:
 
 - **Via UI** — Extensions panel → `...` menu → **Install from VSIX...** → select the `.vsix` file
 - **Via CLI** — `code --install-extension packages/client/digdag-lsp-0.1.0.vsix`
