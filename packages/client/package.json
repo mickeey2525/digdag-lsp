@@ -1,0 +1,45 @@
+{
+  "name": "digdag-lsp",
+  "displayName": "Digdag Language Support",
+  "description": "Language support for Digdag workflow definition files (.dig)",
+  "version": "0.1.0",
+  "publisher": "mickeey2525",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Programming Languages"],
+  "activationEvents": [
+    "onLanguage:digdag"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "digdag",
+        "aliases": ["Digdag", "digdag"],
+        "extensions": [".dig"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "digdag",
+        "scopeName": "source.digdag",
+        "path": "./syntaxes/digdag.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "watch": "tsc -b -w",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.7.0",
+    "typescript": "^5.5.0"
+  }
+}

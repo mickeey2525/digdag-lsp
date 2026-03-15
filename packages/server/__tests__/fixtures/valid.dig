@@ -1,0 +1,30 @@
+timezone: Asia/Tokyo
+
+schedule:
+  daily>: 07:00:00
+
+_export:
+  database: my_db
+
++load_data:
+  sh>: echo "loading data"
+
++transform:
+  td>: queries/transform.sql
+  database: analytics
+  _retry: 3
+
++parallel_tasks:
+  _parallel: true
+
+  +task_a:
+    sh>: echo "task a"
+
+  +task_b:
+    _after: task_a
+    sh>: echo "task b"
+
++notify:
+  mail>: body.txt
+  subject: "Workflow complete"
+  to: [admin@example.com]

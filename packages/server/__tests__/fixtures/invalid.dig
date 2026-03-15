@@ -1,0 +1,24 @@
+timezone: UTC
+
++broken_task:
+  sh>: echo "hello"
+  py>: my_module.func
+
++bad_mix:
+  td>: queries/q.sql
+  +subtask:
+    sh>: echo "sub"
+
++no_parallel_after:
+  +child:
+    _after: something
+    sh>: echo "oops"
+
++conflict:
+  _parallel: true
+  _background: true
+  sh>: echo "conflicting"
+
++bad_retry:
+  _retry: -1
+  sh>: echo "retry"

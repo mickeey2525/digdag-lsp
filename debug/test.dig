@@ -1,0 +1,45 @@
+!include: 'otherDir/test2.dig'
+
+timezone: UTC
+schedule:
+  daily>: 07:00:00
+
++step1:
+  sh>: tasks/shell_sample.sh
+
++step2:
+  py>: tasks.MyWorkflow.step2
+  param1: this is param1
+
++step3:
+  rb>: MyWorkflow.step3
+  require: tasks/ruby_sample.rb
+
++step4:
+  td>: tasks/td_sample.sql
+  database: sample_db
+  engine: presto
+
++step5:
+  sh>: tasks/shell_sample.sh
+
++step6:
+  sh>: 'echo "Today is ${session_date}, session started at ${session_time}"'
+
++step7:
+  td>: queries/daily_report.sql
+  database: reporting_${session_date_compact}
+  engine: hive
+
++step8:
+  sh>: 'echo "Previous session: ${last_session_date}, Next session: ${next_session_date}"'
+
++step9:
+  sh>: 'echo "Unix time: ${session_unixtime}, TZ offset: ${session_tz_offset}"'
+
++step10:
+  py>: tasks.MyWorkflow.process
+  date: ${session_date}
+  year: ${moment(session_time).format('yyyy')}
+  task: ${task_name}
+  project: ${project_name}

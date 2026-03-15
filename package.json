@@ -1,0 +1,17 @@
+{
+  "name": "digdag-lsp-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/server",
+    "packages/client"
+  ],
+  "scripts": {
+    "build": "npm run build -w packages/server && npm run build -w packages/client",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

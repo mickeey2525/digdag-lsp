@@ -1,0 +1,10 @@
+timezone: UTC
+
++task:
+  sh>: echo "${session_date}"
+  _export:
+    date: "${session_date_compact}"
+    time: "${session_time}"
+
++broken_var:
+  sh>: echo "${unclosed

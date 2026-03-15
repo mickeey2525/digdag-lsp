@@ -1,0 +1,20 @@
+{
+  "name": "digdag-language-server",
+  "version": "0.1.0",
+  "description": "Language Server for Digdag workflow definition files",
+  "main": "out/server.js",
+  "scripts": {
+    "build": "tsc -b",
+    "watch": "tsc -b -w"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^9.0.1",
+    "vscode-languageserver-textdocument": "^1.0.12",
+    "vscode-uri": "^3.1.0",
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.5.0"
+  }
+}

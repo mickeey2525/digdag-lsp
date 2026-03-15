@@ -1,0 +1,79 @@
+{
+  "name": "Digdag",
+  "scopeName": "source.digdag",
+  "fileTypes": ["dig"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#task" },
+    { "include": "#operator" },
+    { "include": "#directive" },
+    { "include": "#variable" },
+    { "include": "#top-level-key" },
+    { "include": "#string" },
+    { "include": "#number" },
+    { "include": "#boolean" },
+    { "include": "#null" }
+  ],
+  "repository": {
+    "comment": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.digdag"
+    },
+    "task": {
+      "match": "^(\\s*)(\\+[\\w-]+)\\s*(:)",
+      "captures": {
+        "2": { "name": "entity.name.function.task.digdag" },
+        "3": { "name": "punctuation.separator.key-value.digdag" }
+      }
+    },
+    "operator": {
+      "match": "^(\\s*)([\\w.]+>)\\s*(:)",
+      "captures": {
+        "2": { "name": "support.function.operator.digdag" },
+        "3": { "name": "punctuation.separator.key-value.digdag" }
+      }
+    },
+    "directive": {
+      "match": "^(\\s*)(_[\\w]+)\\s*(:)",
+      "captures": {
+        "2": { "name": "keyword.other.directive.digdag" },
+        "3": { "name": "punctuation.separator.key-value.digdag" }
+      }
+    },
+    "variable": {
+      "match": "\\$\\{[^}]*\\}",
+      "name": "variable.other.interpolation.digdag"
+    },
+    "top-level-key": {
+      "match": "^(timezone|schedule|sla|meta)\\s*(:)",
+      "captures": {
+        "1": { "name": "keyword.other.toplevel.digdag" },
+        "2": { "name": "punctuation.separator.key-value.digdag" }
+      }
+    },
+    "string": {
+      "patterns": [
+        {
+          "match": "\"[^\"]*\"",
+          "name": "string.quoted.double.digdag"
+        },
+        {
+          "match": "'[^']*'",
+          "name": "string.quoted.single.digdag"
+        }
+      ]
+    },
+    "number": {
+      "match": "\\b\\d+(\\.\\d+)?\\b",
+      "name": "constant.numeric.digdag"
+    },
+    "boolean": {
+      "match": "\\b(true|false)\\b",
+      "name": "constant.language.boolean.digdag"
+    },
+    "null": {
+      "match": "\\b(null)\\b",
+      "name": "constant.language.null.digdag"
+    }
+  }
+}
