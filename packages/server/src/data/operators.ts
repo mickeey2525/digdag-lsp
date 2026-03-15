@@ -177,7 +177,7 @@ export const OPERATORS: OperatorDef[] = [
     description: "Sends an email notification.",
     params: [
       { name: "mail>", description: "Email body template file path", required: true },
-      { name: "body", description: "Email body content (template processed)", required: true },
+      { name: "body", description: "Email body content (template processed)" },
       { name: "subject", description: "Email subject line" },
       { name: "to", description: "Recipient email address(es)", required: true },
       { name: "cc", description: "Carbon copy recipients" },
