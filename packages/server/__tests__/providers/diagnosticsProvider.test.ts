@@ -300,6 +300,24 @@ describe("diagnosticsProvider", () => {
       expect(missing.length).toBe(0);
     });
 
+    it("does not report error when required param is a directive (for_each> with _do)", () => {
+      const text = `
++transform:
+  for_each>:
+    scope: ['all', 'train', 'test']
+  _parallel: true
+  _do:
+    +split:
+      sh>: echo "split"
+`;
+      const doc = parse("file:///test.dig", text);
+      const diagnostics = computeDiagnostics(doc);
+      const missing = diagnostics.filter((d) =>
+        d.message.includes("Missing required parameter")
+      );
+      expect(missing.length).toBe(0);
+    });
+
     it("does not check required params for unknown operators", () => {
       const text = `
 +task:
