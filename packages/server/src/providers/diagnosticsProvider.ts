@@ -114,9 +114,12 @@ function validateTask(
       }
 
       // Missing required parameters (excluding the operator key itself)
+      // Include directives (e.g. _do, _parallel) since some operators
+      // declare them as required parameters.
       const presentKeys = new Set([
         op.name,
         ...task.config.map((e) => e.key),
+        ...task.directives.map((d) => d.name),
       ]);
       for (const param of opDef.params) {
         if (param.required && !presentKeys.has(param.name)) {
