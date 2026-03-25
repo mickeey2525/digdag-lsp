@@ -107,6 +107,34 @@ describe("digdagParser", () => {
     });
   });
 
+  describe("variable interpolations with special characters", () => {
+    it("does not produce YAML errors for quotes inside ${...}", () => {
+      const text = `
++task:
+  if>: \${rule["col_names"].length == 0}
+  _do:
+    sh>: echo "done"
+`;
+      const doc = parse("file:///test/interpolation.dig", text);
+      const yamlErrors = doc.yamlErrors.filter(
+        (e) => !e.message.includes("Unclosed")
+      );
+      expect(yamlErrors.length).toBe(0);
+    });
+
+    it("does not produce YAML errors for colons inside ${...}", () => {
+      const text = `
++task:
+  echo>: \${a > 0 ? "yes" : "no"}
+`;
+      const doc = parse("file:///test/interpolation2.dig", text);
+      const yamlErrors = doc.yamlErrors.filter(
+        (e) => !e.message.includes("Unclosed")
+      );
+      expect(yamlErrors.length).toBe(0);
+    });
+  });
+
   describe("nested tasks", () => {
     it("parses deeply nested tasks", () => {
       const text = `
