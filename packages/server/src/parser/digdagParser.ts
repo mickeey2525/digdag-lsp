@@ -84,6 +84,28 @@ function preprocessDigdagYaml(text: string): string {
   return out;
 }
 
+// Map raw YAML parser errors to user-friendly messages for .dig files.
+const FRIENDLY_YAML_MESSAGES: Record<string, string> = {
+  BLOCK_AS_IMPLICIT_KEY:
+    "Invalid indentation: a value appears to be nested inside a key on the same line. Check that colons and indentation are correct.",
+  MULTILINE_IMPLICIT_KEY:
+    "A mapping key must be on a single line. Check for missing colons or incorrect indentation.",
+  DUPLICATE_KEY:
+    "Duplicate key found. Each key in a mapping must be unique.",
+  MISSING_CHAR:
+    "Unclosed bracket or brace. Make sure all [ ] and { } are properly closed.",
+  BAD_INDENT:
+    "Incorrect indentation. Check that nested items are consistently indented with spaces.",
+  TAB_AS_INDENT:
+    "Tabs are not allowed for indentation. Use spaces instead.",
+  BAD_SCALAR_START:
+    "Invalid character at the start of a value. Wrap the value in quotes if it contains special characters.",
+};
+
+function friendlyYamlMessage(error: { code: string; message: string }): string {
+  return FRIENDLY_YAML_MESSAGES[error.code] ?? error.message;
+}
+
 export function parse(uri: string, text: string): DigdagDocument {
   const lineOffset = new LineOffsetTable(text);
   const doc: DigdagDocument = {
@@ -112,13 +134,13 @@ export function parse(uri: string, text: string): DigdagDocument {
     return doc;
   }
 
-  // Forward YAML errors
+  // Forward YAML errors with user-friendly messages
   for (const error of yamlDoc.errors) {
     const range = error.pos
       ? lineOffset.rangeFromOffsets(error.pos[0], error.pos[1])
       : { start: { line: 0, character: 0 }, end: { line: 0, character: 1 } };
     doc.yamlErrors.push({
-      message: error.message,
+      message: friendlyYamlMessage(error),
       range,
       severity: DiagnosticSeverity.Error,
     });
@@ -129,7 +151,7 @@ export function parse(uri: string, text: string): DigdagDocument {
       ? lineOffset.rangeFromOffsets(warning.pos[0], warning.pos[1])
       : { start: { line: 0, character: 0 }, end: { line: 0, character: 1 } };
     doc.yamlErrors.push({
-      message: warning.message,
+      message: friendlyYamlMessage(warning),
       range,
       severity: DiagnosticSeverity.Warning,
     });
