@@ -43,8 +43,45 @@ const TOP_LEVEL_KEYS = new Set([
 // Replace `!include:` with a safe key so the YAML parser doesn't choke.
 const INCLUDE_RE = /^(\s*)!include\s*:\s*/gm;
 
+// Replace ${...} interpolations with same-length placeholders so that
+// quotes, colons, and brackets inside expressions don't confuse the
+// YAML parser.  Offsets are preserved because the placeholder is
+// padded to exactly the same byte length as the original token.
+function neutralizeInterpolations(text: string): string {
+  const result: string[] = [];
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "$" && i + 1 < text.length && text[i + 1] === "{") {
+      const start = i;
+      i += 2;
+      let depth = 1;
+      while (i < text.length && depth > 0) {
+        if (text[i] === "{") depth++;
+        else if (text[i] === "}") depth--;
+        if (depth > 0) i++;
+      }
+      if (depth === 0) {
+        i++; // skip closing }
+        const len = i - start;
+        // "__X" + "_".repeat(len - 4) + "X" keeps the same length
+        result.push("__" + "_".repeat(len - 2));
+      } else {
+        // unclosed — leave as-is so variableParser can report the error
+        result.push(text.substring(start));
+        break;
+      }
+    } else {
+      result.push(text[i]);
+      i++;
+    }
+  }
+  return result.join("");
+}
+
 function preprocessDigdagYaml(text: string): string {
-  return text.replace(INCLUDE_RE, "$1__digdag_include: ");
+  let out = text.replace(INCLUDE_RE, "$1__digdag_include: ");
+  out = neutralizeInterpolations(out);
+  return out;
 }
 
 export function parse(uri: string, text: string): DigdagDocument {
