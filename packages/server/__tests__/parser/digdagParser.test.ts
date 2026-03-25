@@ -82,6 +82,24 @@ describe("digdagParser", () => {
       const doc = parse("file:///test/bad.dig", ":\n  bad: [unclosed");
       expect(doc.yamlErrors.length).toBeGreaterThan(0);
     });
+
+    it("shows user-friendly message for indentation errors", () => {
+      const text = `
++transform:
+  for_each>:
+    scope: ['a']
+  _do:
+  _parallel: true
+    +split:
+      sh>: echo
+`;
+      const doc = parse("file:///test/indent.dig", text);
+      expect(doc.yamlErrors.length).toBeGreaterThan(0);
+      for (const e of doc.yamlErrors) {
+        expect(e.message).not.toContain("compact mappings");
+        expect(e.message).not.toContain("Implicit keys");
+      }
+    });
   });
 
   describe("!include directive", () => {
